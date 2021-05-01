@@ -36,8 +36,46 @@ class Atendimento {
 
         conexao.query(sql, atendimentoDatado, (err, result) => {
             if (err) return res.status(400).json(err);
-            res.status(201).json(result);
+            res.status(201).json(atendimentoDatado);
 
+        });
+    }
+
+    detalhe(id, res) {
+        let sql = 'SELECT * FROM atendimentos WHERE id = ?';
+
+        conexao.query(sql, id, (err, results) => {
+            if (err) res.status(400).json(err);
+            return res.json(results[0]);
+        });
+    }
+
+    lista(res) {
+        let sql = 'SELECT * FROM atendimentos';
+
+        conexao.query(sql, (err, results) => {
+            if (err) res.status(400).json(err);
+            return res.json(results);
+        });
+    }
+
+    altera(id, valores, res) {
+        if (valores.data) {
+            valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
+        }
+        let sql = 'UPDATE atendimentos SET ? WHERE id = ?';
+        conexao.query(sql, [valores, id], (err, results) => {
+            if (err) return res.status(400).json(err);
+            return res.json({...valores, id});
+        });
+    }
+
+    deletar(id, res) {
+        let sql = 'DELETE FROM atendimentos WHERE id = ?';
+
+        conexao.query(sql, id, (err, results) => {
+            if (err) return res.status(400).json(err);
+            return res.json({id});
         });
     }
 }
